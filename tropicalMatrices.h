@@ -17,22 +17,42 @@ public:
     const std::vector<tropical>& operator[] (int ind) const {
         return matrix[ind];
     }
-    
+
     template<size_t A, size_t B>
     friend TropicalMatrix<A, B> operator + (const TropicalMatrix<A, B>&, const TropicalMatrix<A, B>&);
 
     template<size_t A, size_t B, size_t C>
     friend TropicalMatrix<A, C> operator * (const TropicalMatrix<A, B>&, const TropicalMatrix<B, C>&);
+
+    TropicalMatrix operator += (const TropicalMatrix<N, M>& rhs) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < M; ++j) {
+                (*this)[i][j] += rhs[i][j];
+            }
+        }
+        return *this;
+    }
+
+    template<size_t K>
+    TropicalMatrix operator *= (const TropicalMatrix<M, K>& rhs) {
+        *this = *this * rhs;
+        return *this;
+    }
+
+    TropicalMatrix<N, N> kleene() {
+        TropicalMatrix<N> res, tmp;
+        for (size_t i = 0; i < N; ++i) {
+            res += tmp;
+            tmp *= (*this);
+        }
+        return res;
+    }
 };
 
 template<size_t N, size_t M>
 TropicalMatrix<N, M> operator + (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
-    TropicalMatrix<N, M> res;
-    for (size_t i = 0; i < N; ++i) {
-        for (size_t j = 0; j < M; ++j) {
-            res[i][j] = lhs[i][j] + rhs[i][j];
-        }
-    }
+    TropicalMatrix<N, M> res = lhs;
+    res += rhs;
     return res;
 }
 
