@@ -73,6 +73,10 @@ bool operator < (const Tropical& lhs, const Tropical& rhs) {
 }
 
 bool operator == (const Tropical& lhs, const Tropical& rhs) {
-    return !(lhs < rhs && rhs < lhs);
+    return !(lhs < rhs || rhs < lhs);
+}
+
+bool operator != (const Tropical& lhs, const Tropical& rhs) {
+    return !(lhs == rhs);
 }
 

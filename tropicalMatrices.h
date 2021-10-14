@@ -29,6 +29,9 @@ public:
     }
 
     template<size_t A, size_t B>
+    friend bool operator == (const TropicalMatrix<A, B>&, const TropicalMatrix<A, B>&);
+
+    template<size_t A, size_t B>
     friend TropicalMatrix<A, B> operator + (const TropicalMatrix<A, B>&, const TropicalMatrix<A, B>&);
 
     template<size_t A, size_t B, size_t C>
@@ -117,6 +120,11 @@ std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
     return out;
 }
 
+template<size_t N, size_t M>
+bool operator == (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    return lhs.matrix == rhs.matrix;
+}
+
 template<size_t N>
 TropicalMatrix<N, N> getC(const TropicalMatrix<N, N>& M, std::set<size_t> g) {
     TropicalMatrix<N, N> res;
@@ -133,7 +141,7 @@ TropicalMatrix<N, N> getR(const TropicalMatrix<N, N>& M, std::set<size_t> g) {
     TropicalMatrix<N, N> res;
     for (int v : g) {
         for (int i = 0; i < N; ++i) {
-            res[v][i] = M[i][v];
+            res[v][i] = M[v][i];
         }
     }
     return res;
@@ -148,5 +156,33 @@ TropicalMatrix<N, N> getS(const TropicalMatrix<N, N>& A, std::set<size_t> g) {
         }
     }
     return res;
+}
+
+template<size_t N>
+TropicalMatrix<N, N> getB(const TropicalMatrix<N, N>& A, std::set<size_t> g) {
+    TropicalMatrix<N, N> res;
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < N; j++) {
+            if (g.count(i) || g.count(j)) {
+                res[i][j] = _inf;
+            } else {
+                res[i][j] = A[i][j];
+            }
+        }
+    }
+    return res;
+}
+
+template<size_t N>
+size_t getT(const TropicalMatrix<N>& A, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
+    TropicalMatrix<N> powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit();
+    for (size_t t = 0; ; ++t) {
+        std::cout << t << '\n' << powA << '\n' << C * powS * R << '\n';
+        if (powA == C * powS * R) {
+            return t;
+        }
+        powA *= A;
+        powS *= S;
+    }
 }
 
