@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <set>
 #include "tropicalSemiring.h"
 
 template<size_t N, size_t M = N>
@@ -82,6 +83,7 @@ public:
         }
         return (*this) * power(n - 1);
     }
+
 };
 
 template<size_t N, size_t M>
@@ -113,5 +115,38 @@ std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
         out << '\n';
     }
     return out;
+}
+
+template<size_t N>
+TropicalMatrix<N, N> getC(const TropicalMatrix<N, N>& M, std::set<size_t> g) {
+    TropicalMatrix<N, N> res;
+    for (int v : g) {
+        for (int i = 0; i < N; ++i) {
+            res[i][v] = M[i][v];
+        }
+    }
+    return res;
+}
+
+template<size_t N>
+TropicalMatrix<N, N> getR(const TropicalMatrix<N, N>& M, std::set<size_t> g) {
+    TropicalMatrix<N, N> res;
+    for (int v : g) {
+        for (int i = 0; i < N; ++i) {
+            res[v][i] = M[i][v];
+        }
+    }
+    return res;
+}
+
+template<size_t N>
+TropicalMatrix<N, N> getS(const TropicalMatrix<N, N>& A, std::set<size_t> g) {
+    TropicalMatrix<N, N> res;
+    for (size_t i : g) {
+        for (size_t j : g) {
+            res[i][j] = A[i][j]; // * -lambda(A) TODO
+        }
+    }
+    return res;
 }
 
