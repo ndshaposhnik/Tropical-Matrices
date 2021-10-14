@@ -1,20 +1,29 @@
 #pragma once
 #include <vector>
 #include "tropicalSemiring.h"
-using std::vector;
 
 template<size_t N, size_t M = N>
 class TropicalMatrix {
 private:
-    vector<vector<tropical>> matrix;
+    std::vector<std::vector<Tropical>> matrix;
 public:
-    TropicalMatrix() : matrix(vector<vector<tropical>>(N, vector<tropical>(M))) {}
+    TropicalMatrix() : matrix(std::vector<std::vector<Tropical>>(N, std::vector<Tropical>(M))) {}
 
-    std::vector<tropical>& operator[] (int ind) {
+    TropicalMatrix(const std::initializer_list<std::vector<Tropical>>& list) {
+        std::vector<std::vector<Tropical>> tmp(list);
+        matrix.resize(N, std::vector<Tropical>(M));
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < M; ++j) {
+                matrix[i][j] = tmp[i][j];
+            }
+        }
+    }
+
+    std::vector<Tropical>& operator[] (int ind) {
         return matrix[ind];
     }
 
-    const std::vector<tropical>& operator[] (int ind) const {
+    const std::vector<Tropical>& operator[] (int ind) const {
         return matrix[ind];
     }
 
@@ -39,8 +48,21 @@ public:
         return *this;
     }
 
-    TropicalMatrix<N, N> kleene() {
-        TropicalMatrix<N> res, tmp;
+    static TropicalMatrix<N, N> unit() {
+        TropicalMatrix<N, N> res;
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < N; ++j) {
+                res[i][j] = TropicalZero;
+            }
+        }
+        for (size_t i = 0; i < N; ++i) {
+            res[i][i] = 0;
+        }
+        return res;
+    }
+
+    TropicalMatrix<N, N> kleene() const {
+        TropicalMatrix<N> res, tmp = unit();
         for (size_t i = 0; i < N; ++i) {
             res += tmp;
             tmp *= (*this);

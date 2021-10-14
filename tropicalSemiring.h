@@ -2,29 +2,41 @@
 #include <iostream>
 #include <optional>
 
-struct tropical {
+class Tropical {
+private:
     std::optional<int> val;
+public:
+    Tropical() : val() {}
+    Tropical(int x) : val(x) {}
 
-    tropical& operator += (const tropical& other) {
-        if (!val) {
-            val = other.val;
-        } if (other.val) {
-            *val = std::max(*val, *other.val);
-        }
-        return *this;
-    }
+    Tropical& operator += (const Tropical&);
+    Tropical& operator *= (const Tropical&);
 
-    tropical& operator *= (const tropical& other) {
-        if (val && other.val) {
-            *val += *other.val;
-        } else if (val && !other.val) {
-            val.reset();
-        }
-        return *this;
-    }
+    friend bool operator < (const Tropical&, const Tropical&);
+    friend std::ostream& operator << (std::ostream&, const Tropical&);
 };
 
-std::ostream& operator << (std::ostream& out, const tropical& t) {
+const Tropical TropicalZero = Tropical();
+
+Tropical& Tropical::operator += (const Tropical& other) {
+    if (!val) {
+        val = other.val;
+    } if (other.val) {
+        *val = std::max(*val, *other.val);
+    }
+    return *this;
+}
+
+Tropical& Tropical::operator *= (const Tropical& other) {
+    if (val && other.val) {
+        *val += *other.val;
+    } else if (val && !other.val) {
+        val.reset();
+    }
+    return *this;
+}
+
+std::ostream& operator << (std::ostream& out, const Tropical& t) {
     if (t.val) {
         out << *t.val << ' ';
     } else {
@@ -33,19 +45,19 @@ std::ostream& operator << (std::ostream& out, const tropical& t) {
     return out;
 }
 
-tropical operator + (const tropical& lhs, const tropical& rhs) {
-    tropical res = lhs;
+Tropical operator + (const Tropical& lhs, const Tropical& rhs) {
+    Tropical res = lhs;
     res += rhs;
     return res;
 }
 
-tropical operator * (const tropical& lhs, const tropical& rhs) {
-    tropical res = lhs;
+Tropical operator * (const Tropical& lhs, const Tropical& rhs) {
+    Tropical res = lhs;
     res *= rhs;
     return res;
 }
 
-bool operator < (const tropical& lhs, const tropical& rhs) {
+bool operator < (const Tropical& lhs, const Tropical& rhs) {
     if (!lhs.val && rhs.val) {
         return true;
     }
@@ -53,5 +65,9 @@ bool operator < (const tropical& lhs, const tropical& rhs) {
         return false;
     }
     return *lhs.val < *rhs.val;
+}
+
+bool operator == (const Tropical& lhs, const Tropical& rhs) {
+    return !(lhs < rhs && rhs < lhs);
 }
 
