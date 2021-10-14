@@ -52,7 +52,7 @@ public:
         TropicalMatrix<N, N> res;
         for (size_t i = 0; i < N; ++i) {
             for (size_t j = 0; j < N; ++j) {
-                res[i][j] = TropicalZero;
+                res[i][j] = _inf;
             }
         }
         for (size_t i = 0; i < N; ++i) {
@@ -68,6 +68,19 @@ public:
             tmp *= (*this);
         }
         return res;
+    }
+
+    TropicalMatrix<N, N> power(size_t n) const {
+        if (n == 0) {
+            return unit();
+        }
+        if (n == 1) {
+            return *this;
+        }
+        if (n % 2 == 0) {
+            return ((*this) * (*this)).power(n / 2);
+        }
+        return (*this) * power(n - 1);
     }
 };
 

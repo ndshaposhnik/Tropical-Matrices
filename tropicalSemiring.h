@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <iostream>
 #include <optional>
 
@@ -16,7 +17,7 @@ public:
     friend std::ostream& operator << (std::ostream&, const Tropical&);
 };
 
-const Tropical TropicalZero = Tropical();
+const Tropical _inf = Tropical();
 
 Tropical& Tropical::operator += (const Tropical& other) {
     if (!val) {
@@ -38,7 +39,11 @@ Tropical& Tropical::operator *= (const Tropical& other) {
 
 std::ostream& operator << (std::ostream& out, const Tropical& t) {
     if (t.val) {
-        out << *t.val << ' ';
+        std::string now = std::to_string(*t.val);
+        while (now.size() < 4) {
+            now = ' ' + now;
+        }
+        out << now << ' ';
     } else {
         out << "-inf ";
     }
