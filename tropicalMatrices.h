@@ -113,9 +113,9 @@ template<size_t N, size_t M>
 std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
     for (size_t i = 0; i < N; ++i) {
         for (size_t j = 0; j < M; ++j) {
-            out << tm[i][j];
+            out << tm[i][j] << '&';
         }
-        out << '\n';
+        out << "\\\\ \n";
     }
     return out;
 }
@@ -123,6 +123,59 @@ std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
 template<size_t N, size_t M>
 bool operator == (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
     return lhs.matrix == rhs.matrix;
+}
+
+template<size_t N, size_t M>
+bool operator != (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    return !(lhs.matrix == rhs.matrix);
+}
+
+template<size_t N, size_t M>
+bool operator < (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
+            if (lhs[i][j] >= rhs[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template<size_t N, size_t M>
+bool operator > (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
+            if (lhs[i][j] <= rhs[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template<size_t N, size_t M>
+bool operator <= (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
+            if (lhs[i][j] > rhs[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template<size_t N, size_t M>
+bool operator >= (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
+            if (lhs[i][j] < rhs[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 template<size_t N>
@@ -173,11 +226,10 @@ TropicalMatrix<N, N> getB(const TropicalMatrix<N, N>& A, std::set<size_t> g) {
     return res;
 }
 
-template<size_t N>
+template<size_t N> // Проверяется только первое равенство -- ошибка!!!
 size_t getT(const TropicalMatrix<N>& A, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
-    TropicalMatrix<N> powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit();
+    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit();
     for (size_t t = 0; ; ++t) {
-        std::cout << t << '\n' << powA << '\n' << C * powS * R << '\n';
         if (powA == C * powS * R) {
             return t;
         }
@@ -186,3 +238,27 @@ size_t getT(const TropicalMatrix<N>& A, const TropicalMatrix<N>& C, const Tropic
     }
 }
 
+template<size_t N> // Проверяется только первое равенство -- ошибка!!!
+size_t getT1(const TropicalMatrix<N>& A, const TropicalMatrix<N>& B, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
+    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
+    for (size_t t = 0; ; ++t) {
+        if (powA == C * powS * R + powB) {
+            return t;
+        }
+        powA *= A;
+        powS *= S;
+        powB *= B;
+    }
+}
+
+template<size_t N> // Проверяется только первое неравенство -- ошибка!!!
+size_t getT2(const TropicalMatrix<N>& B, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
+    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
+    for (size_t t = 0; ; ++t) {
+        if (C * powS * R >= powB) {
+            return t;
+        }
+        powS *= S;
+        powB *= B;
+    }
+}

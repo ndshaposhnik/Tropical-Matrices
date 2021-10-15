@@ -40,12 +40,12 @@ Tropical& Tropical::operator *= (const Tropical& other) {
 std::ostream& operator << (std::ostream& out, const Tropical& t) {
     if (t.val) {
         std::string now = std::to_string(*t.val);
-        while (now.size() < 4) {
+        while (now.size() < 7) {
             now = ' ' + now;
         }
         out << now << ' ';
     } else {
-        out << "-inf ";
+        out << "-\\infty ";
     }
     return out;
 }
@@ -70,6 +70,18 @@ bool operator < (const Tropical& lhs, const Tropical& rhs) {
         return false;
     }
     return *lhs.val < *rhs.val;
+}
+
+bool operator > (const Tropical& lhs, const Tropical& rhs) {
+    return rhs < lhs;
+}
+
+bool operator <= (const Tropical& lhs, const Tropical& rhs) {
+    return !(lhs > rhs);
+}
+
+bool operator >= (const Tropical& lhs, const Tropical& rhs) {
+    return !(lhs < rhs);
 }
 
 bool operator == (const Tropical& lhs, const Tropical& rhs) {

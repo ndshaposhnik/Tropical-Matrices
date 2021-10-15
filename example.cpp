@@ -12,14 +12,19 @@ int main() {
 
     int sigma = 1;
     auto M = A.kleene();
-    std::set<size_t> g = {0, 1};
+    std::set<size_t> g = {1};
     auto C = getC(M, g);
     auto S = getS(A, g);
     auto R = getR(M, g);
     
     auto B = getB(A, g);
-    cout << A << '\n' << M << '\n' << C << '\n' << S << '\n' << R;
-    cout << getT(A, C, S, R) << '\n';
+    cout << A << '\n' << M << '\n' << C << '\n' << S << '\n' << R << '\n' << B << '\n';
+    size_t T = getT(A, C, S, R);
+    size_t T1 = getT1(A, B, C, S, R);
+    size_t T2 = getT2(B, C, S, R);
+    cout << T << ' ' << T1 << ' ' << T2 << '\n';
+    //cout << A.power(T1) << '\n' << C * S.power(T1) * R + B.power(T1) << '\n';
+    cout << C * S.power(T2) * R << '\n' << B.power(T2) << '\n';
 
     return 0;
 }
