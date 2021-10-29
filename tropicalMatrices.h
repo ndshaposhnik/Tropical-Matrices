@@ -87,6 +87,10 @@ public:
         return (*this) * power(n - 1);
     }
 
+    TropicalMatrix<N, N> operator ^ (size_t pow) const {
+        return power(pow);
+    }
+
 };
 
 template<size_t N, size_t M>
@@ -113,12 +117,25 @@ template<size_t N, size_t M>
 std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
     for (size_t i = 0; i < N; ++i) {
         for (size_t j = 0; j < M; ++j) {
+            out << tm[i][j];
+        }
+        out << '\n';
+    }
+    return out;
+}
+
+/*
+template<size_t N, size_t M>
+std::ostream& operator << (std::ostream& out, const TropicalMatrix<N, M>& tm) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
             out << tm[i][j] << '&';
         }
         out << "\\\\ \n";
     }
     return out;
 }
+*/
 
 template<size_t N, size_t M>
 bool operator == (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {

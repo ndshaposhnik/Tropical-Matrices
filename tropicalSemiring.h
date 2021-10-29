@@ -40,6 +40,20 @@ Tropical& Tropical::operator *= (const Tropical& other) {
 std::ostream& operator << (std::ostream& out, const Tropical& t) {
     if (t.val) {
         std::string now = std::to_string(*t.val);
+        while (now.size() < 4) {
+            now = ' ' + now;
+        }
+        out << now << ' ';
+    } else {
+        out << "_inf ";
+    }
+    return out;
+}
+
+/*
+std::ostream& operator << (std::ostream& out, const Tropical& t) {
+    if (t.val) {
+        std::string now = std::to_string(*t.val);
         while (now.size() < 7) {
             now = ' ' + now;
         }
@@ -49,6 +63,7 @@ std::ostream& operator << (std::ostream& out, const Tropical& t) {
     }
     return out;
 }
+*/
 
 Tropical operator + (const Tropical& lhs, const Tropical& rhs) {
     Tropical res = lhs;
