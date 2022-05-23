@@ -3,6 +3,10 @@
 #include <set>
 #include "tropicalSemiring.h"
 
+int wielandtNumber(int n) {
+    return (n - 1) * (n - 1) + 1;
+}
+
 template<size_t N, size_t M = N>
 class TropicalMatrix {
 private:
@@ -89,6 +93,51 @@ public:
 
     TropicalMatrix<N, N> operator ^ (size_t pow) const {
         return power(pow);
+    }
+
+    int exponent() const {
+        int cnt = 1;
+        auto B = *this;
+        while (cnt <= wielandtNumber(N) && !(B > TropicalMatrix<N>())) {
+            cnt++;
+            B *= *this;
+        }
+        if (cnt == wielandtNumber(N) + 1) {
+            return -1;
+        }
+        return cnt;
+    }
+
+    int scramblingIndex() const {
+        int cnt = 1;
+        auto B = *this;
+        while (cnt <= wielandtNumber(N)) {
+            bool isOk = true;
+            for (int v = 0; v < N; v++) {
+                for (int u = 0; u < N; u++) {
+                    bool isPath = false;
+                    for (int w = 0; w < N; w++) {
+                        if (B[v][w] > _inf && B[u][w] > _inf) {
+                            isPath = true;
+                            break;
+                        }
+                    }
+                    if (!isPath) {
+                        isOk = false;
+                        break;
+                    }
+                }
+                if (!isOk) {
+                    break;
+                }
+            }
+            if (isOk) {
+                break;
+            }
+            B *= *this;
+            cnt++;
+        }
+        return cnt;
     }
 
 };
