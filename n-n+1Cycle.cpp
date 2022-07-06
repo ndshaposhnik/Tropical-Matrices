@@ -4,7 +4,7 @@ using std::cin;
 using std::cout;
 
 int main() {
-    const int n = 8;
+    const int n = 7;
     TropicalMatrix<2 * n> A;
     for (int i = 0; i <= n; i++) {
         A[i][(i + 1) % (n + 1)] = 0;
@@ -14,8 +14,6 @@ int main() {
     }
     A[0][n + 1] = 0;
     A[2 * n - 1][0] = 0;
-    int exp = A.exponent();
-    cout << exp << '\n';
     int scr = A.scramblingIndex();
     cout << scr << ' ';
     if (n % 2 == 0) {

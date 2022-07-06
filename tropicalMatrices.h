@@ -132,12 +132,12 @@ public:
                 }
             }
             if (isOk) {
-                break;
+                return cnt;
             }
             B *= *this;
             cnt++;
         }
-        return cnt;
+        return -1;
     }
 
 };
