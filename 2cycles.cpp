@@ -21,16 +21,17 @@ void addCycle(TropicalMatrix<N>& A, int v, int len) {
 }
 
 int main() {
-    const int k = 2;
-    const int n = 2 * k;
-    const int m = 2 * k + 2;
-    TropicalMatrix<n + m - 1> A;
-    addCycle(A, 1, n);
-    addCycle(A, n, m);
-    int sigma = gcd(n, m);
+    const int k = 7;
+    const int n = 1;
+    const int m = 5;
+    const int N = n * k + m * k - 1;
+    TropicalMatrix<N> A;
+    addCycle(A, 1, n * k);
+    addCycle(A, n * k, m * k);
+    int sigma = gcd(n * k, m * k);
     auto M = (A.power(sigma)).kleene();
     std::set<size_t> g;
-    for (int i = 0; i < n + m - 1; i++) {
+    for (int i = 0; i < N; i++) {
         g.insert(i);
     }
     auto C = getC(M, g);
@@ -40,10 +41,9 @@ int main() {
 
     //cout << A << '\n' << M << '\n' << C << '\n' << S << '\n' << R << '\n' << B << '\n'; 
     size_t T = getT(A, C, S, R);
-    size_t T1 = getT1(A, B, C, S, R);
-    size_t T2 = getT2(B, C, S, R);
-    int scr = A.scramblingIndex();
-    cout << n + m - 1 << ' ' << T << ' ' << T1 << ' ' << scr << '\n';
+    cout << T << '\n';
+    //size_t T = ((n + 1) * m - n) * k - 1;
+    //cout << A.power(T - 1)[n][N - 1] << '\n';
     return 0;
 }
 

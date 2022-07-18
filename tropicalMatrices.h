@@ -193,7 +193,7 @@ bool operator == (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& r
 
 template<size_t N, size_t M>
 bool operator != (const TropicalMatrix<N, M>& lhs, const TropicalMatrix<N, M>& rhs) {
-    return !(lhs.matrix == rhs.matrix);
+    return !(lhs == rhs);
 }
 
 template<size_t N, size_t M>
@@ -294,7 +294,28 @@ TropicalMatrix<N, N> getB(const TropicalMatrix<N, N>& A, std::set<size_t> g) {
 
 template<size_t N> // Проверяется только первое равенство -- ошибка!!!
 size_t getT(const TropicalMatrix<N>& A, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
-    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit();
+    if (C * R == TropicalMatrix<N>::unit()) {
+        return 0;
+    }
+    int l = 0;
+    int r = 1;
+    auto powS = S;
+    auto powA = A;
+    while (C * powS * R != powA) { 
+        powS *= powS;
+        powA *= powA;
+        r *= 2;
+    }
+    while (r - l > 1) {
+        int m = (r + l) / 2;
+        if (C * S.power(m) * R == A.power(m)) {
+            r = m;
+        } else {
+            l = m;
+        }
+    }
+    return r;
+/*    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit();
     for (size_t t = 0; ; ++t) {
         if (powA == C * powS * R) {
             return t;
@@ -302,11 +323,36 @@ size_t getT(const TropicalMatrix<N>& A, const TropicalMatrix<N>& C, const Tropic
         powA *= A;
         powS *= S;
     }
+*/
 }
 
 template<size_t N> // Проверяется только первое равенство -- ошибка!!!
 size_t getT1(const TropicalMatrix<N>& A, const TropicalMatrix<N>& B, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
-    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
+    if (C * R + B == TropicalMatrix<N>::unit()) {
+        return 0;
+    }
+    int l = 0;
+    int r = 1;
+    auto powS = S;
+    auto powA = A;
+    auto powB = B;
+    while (C * powS * R + powB != powA) { 
+        powS *= powS;
+        powA *= powA;
+        powB *= powB;
+        r *= 2;
+    }
+    while (r - l > 1) {
+        int m = (r + l) / 2;
+        if (C * S.power(m) * R + B.power(m) == A.power(m)) {
+            r = m;
+        } else {
+            l = m;
+        }
+    }
+    return r;
+
+/*    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
     for (size_t t = 0; ; ++t) {
         if (powA == C * powS * R + powB) {
             return t;
@@ -315,11 +361,34 @@ size_t getT1(const TropicalMatrix<N>& A, const TropicalMatrix<N>& B, const Tropi
         powS *= S;
         powB *= B;
     }
+*/
 }
 
 template<size_t N> // Проверяется только первое неравенство -- ошибка!!!
 size_t getT2(const TropicalMatrix<N>& B, const TropicalMatrix<N>& C, const TropicalMatrix<N>& S, const TropicalMatrix<N>& R) {
-    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
+    if (C * R >= B) {
+        return 0;
+    }
+    int l = 0;
+    int r = 1;
+    auto powS = S;
+    auto powB = B;
+    while (C * powS * R >= powB) { 
+        powS *= powS;
+        powB *= powB;
+        r *= 2;
+    }
+    while (r - l > 1) {
+        int m = (r + l) / 2;
+        if (C * S.power(m) * R >= B.power(m)) {
+            r = m;
+        } else {
+            l = m;
+        }
+    }
+    return r;
+
+/*    auto powA = TropicalMatrix<N>::unit(), powS = TropicalMatrix<N>::unit(), powB = TropicalMatrix<N>::unit();
     for (size_t t = 0; ; ++t) {
         if (C * powS * R >= powB) {
             return t;
@@ -327,4 +396,5 @@ size_t getT2(const TropicalMatrix<N>& B, const TropicalMatrix<N>& C, const Tropi
         powS *= S;
         powB *= B;
     }
+*/
 }
